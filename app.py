@@ -4,8 +4,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=["https://onebassplayer.github.io"])
-
+CORS(app, origins=["https://onebassplayer.github.io", "https://moonshotexitplanner.com", "https://moonshotfitanalyzer.com"])
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 
 @app.route("/v1/messages", methods=["POST"])
