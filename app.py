@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -70,15 +71,16 @@ def proxy():
         return _bad("API key not configured", 500)
 
     # 1. Hard cap on raw body size before parsing
-    raw = request.get_data(cache=False)
-    if raw is None or len(raw) == 0:
+    raw = request.get_data(cache=True)
+    if not raw:
         return _bad("Empty request body")
     if len(raw) > MAX_BODY_BYTES:
         return _bad(f"Request body too large (max {MAX_BODY_BYTES} bytes)", 413)
 
-    # 2. Strict JSON parse (silent=True so we control the error)
-    body = request.get_json(silent=True, force=False)
-    if body is None:
+    # 2. Parse JSON from the already-read bytes (avoids double-read of stream)
+    try:
+        body = json.loads(raw)
+    except (ValueError, TypeError):
         return _bad("Invalid JSON")
 
     # 3. Schema / size validation
