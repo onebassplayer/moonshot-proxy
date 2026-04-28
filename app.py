@@ -15,8 +15,6 @@ MAX_MESSAGES = 20                 # cap conversation length
 ALLOWED_MODELS = {
     "claude-sonnet-4-5-20250929",
     "claude-sonnet-4-20250514",
-    "claude-3-5-sonnet-20241022",
-    "claude-3-5-haiku-20241022",
     "claude-opus-4-20250514",
 }
 MAX_TOKENS_CEILING = 8000
