@@ -70,6 +70,7 @@ def _validate_payload(body):
         return f"Prompt too large ({total_chars} chars, max {MAX_PROMPT_CHARS})"
     return None
 
+@app.route("/v1/messages", methods=["POST"])
 @app.route("/proxy", methods=["POST"])
 def proxy():
     raw = request.get_data(cache=False)
