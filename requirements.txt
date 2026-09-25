@@ -2,3 +2,4 @@ flask
 flask-cors
 requests
 gunicorn
+redis>=5,<7
