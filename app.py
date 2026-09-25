@@ -59,10 +59,11 @@ RATE_LIMIT_RULES = {
     },
 }
 RATE_LIMIT_SCRIPT = """
-local per_ip_count = redis.call('INCR', KEYS[1])
-if per_ip_count == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end
 local overall_count = redis.call('INCR', KEYS[2])
 if overall_count == 1 then redis.call('EXPIRE', KEYS[2], ARGV[2]) end
+if overall_count > tonumber(ARGV[3]) then return {0, overall_count} end
+local per_ip_count = redis.call('INCR', KEYS[1])
+if per_ip_count == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end
 return {per_ip_count, overall_count}
 """
 ALLOWED_MODELS = {
@@ -123,6 +124,7 @@ def _enforce_rate_limit(scope):
             overall_key,
             per_ip_ttl,
             overall_ttl,
+            rule["overall_limit"],
         )
     except (RedisError, OSError, ValueError, TypeError):
         app.logger.warning("Shared rate-limit store is unavailable")
